@@ -2,6 +2,8 @@
 
 ## 0.1.0-alpha.0 — unreleased
 
+- Add an offline compatibility/gap catalog, adapted W3C databinding examples, Markdown/JSON reports, and CI drift checks; no full-conformance claim.
+
 - Add runtime SOAP clients with reflected operations and native validation schemas.
 - Reflect WSDL into an Effect HttpApi, OpenAPI schemas, and bounded JSON-to-SOAP handlers.
 - Preserve precision and binary values across JSON, map faults/statuses, and propagate cancellation.

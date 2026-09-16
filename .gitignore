@@ -8,3 +8,5 @@ coverage/
 !.env.example
 .example-build/
 *.tgz
+.conformance-build/
+.conformance-cache/

@@ -1,0 +1,10 @@
+<!--
+Copyright (C) 2006 W3C (R) (MIT ERCIM Keio), All Rights Reserved.
+This software includes material copied from XML Schema Patterns for Databinding:
+https://www.w3.org/2002/ws/databinding/examples/6/09/examples.xml
+https://www.w3.org/copyright/document-license-2023/
+https://www.w3.org/copyright/software-license-2023/
+Adapted by effect-wsdl: isolated schema and direct-element SOAP echo wrapper.
+These are modified compatibility probes, not official W3C conformance results.
+-->
+<ex:restrictedWhitespacePreserve xmlns:ex="http://www.w3.org/2002/ws/databinding/examples/6/09/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsdl11="http://schemas.xmlsoap.org/wsdl/" xmlns:soap11enc="http://schemas.xmlsoap.org/soap/encoding/">restricted  whitespace  preserve</ex:restrictedWhitespacePreserve>

@@ -1,6 +1,8 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.5.14/schema.json",
-  "files": { "includes": ["src/**", "test/**", "*.json", "!pnpm-lock.yaml", "!dist"] },
+  "files": {
+    "includes": ["src/**", "test/**", "conformance/*.ts", "*.json", "!pnpm-lock.yaml", "!dist"]
+  },
   "formatter": { "indentStyle": "space", "lineWidth": 100 },
   "linter": {
     "enabled": true,

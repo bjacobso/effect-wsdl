@@ -158,6 +158,8 @@ The implemented scope now also includes `makeClient(contract, options)` and `mak
 
 ## 11. Reference material
 
+Conformance evidence is tracked separately in [docs/CONFORMANCE.md](./docs/CONFORMANCE.md), with the executable catalog and upstream provenance in [conformance/README.md](./conformance/README.md). Expected unsupported-feature rejections and untested areas are gaps, not conformance passes. The current suite is not exhaustive specification validation or certification.
+
 These sources ground the design; this project's subset and API choices are its own constraints.
 
 - [WSDL 1.1](https://www.w3.org/TR/wsdl.html): contract model and SOAP bindings.

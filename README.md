@@ -2,7 +2,7 @@
 
 Generate typed TypeScript SOAP clients from WSDL, build clients at runtime, or expose a WSDL as a JSON HTTP API using [Effect](https://effect.website/).
 
-**Working alpha (`0.1.0-alpha.0`), not yet published to npm.** The generator, runtime client, and reflected `HttpApi` bridge are implemented. Unsupported contract features fail explicitly.
+**Working alpha (`0.1.0-alpha.0`), not yet published to npm.** The generator, runtime client, and reflected `HttpApi` bridge are implemented for a limited subset. See the [compatibility report](./docs/CONFORMANCE.md) for unsupported features and known validation gaps.
 
 ## Try it
 
@@ -162,6 +162,16 @@ Unsupported: SOAP 1.2, WSDL 2.0, RPC/encoded bindings, one-way operations, SOAP 
 
 See [SPEC.md](./SPEC.md), [PLAN.md](./PLAN.md), and [design decisions](./docs/DECISIONS.md).
 
+### Conformance coverage and known gaps
+
+The [generated compatibility report](./docs/CONFORMANCE.md) records supported examples, explicit rejections, validation defects, behavioral failures, and untested areas. It combines focused WSDL/XSD probes with all 324 examples from an adapted W3C databinding source catalog. This is not full WSDL conformance or an official W3C certification. [Method, upstream suites, and provenance](./conformance/README.md).
+
+```sh
+pnpm conformance           # run offline and summarize current observations
+pnpm conformance --check   # compare against the reviewed report (also runs in CI)
+pnpm conformance --strict  # exits nonzero while missing or untested cases remain
+```
+
 ## Development
 
 ```sh
@@ -171,6 +181,8 @@ pnpm example
 ```
 
 Tests cover local HTTP calls, independent XML expectations, generated consumer compilation, property-based codecs, resource policies, rollback, and CLI exit codes. CI runs on Node.js 22 and 24. Package tests need registry access to install pinned dependencies into a temporary project.
+
+Conformance regression tests check agreement with recorded observations, including known failures; their passing count is not a conformance score.
 
 Contributions should include a redistributable WSDL/XSD fixture and wire expectations. See [CONTRIBUTING.md](./CONTRIBUTING.md). Do not contribute private contracts or credentials.
 

@@ -1,0 +1,2 @@
+# Preserve source and instance whitespace in the third-party XML corpus.
+conformance/vendor/w3c-databinding/** linguist-vendored=true -whitespace

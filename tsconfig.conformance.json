@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": ".conformance-build",
+    "declaration": false
+  },
+  "include": ["src/**/*.ts", "conformance/*.ts"]
+}

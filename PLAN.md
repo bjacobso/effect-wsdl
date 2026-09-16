@@ -98,7 +98,19 @@ Exit: another developer can follow the README against the published alpha withou
 - [x] Test native runtime calls, JSON-to-SOAP round trips, real Node HTTP serving, and installed-package exports.
 - [x] Document the JSON mapping and provide a Node server example with Swagger UI.
 
-## Deferred work
+## Conformance coverage extension
+
+- [x] Research W3C databinding, WSDL 2.0, XML Schema, and WS-I test resources.
+- [x] Adapt the full W3C databinding source catalog into offline, hash-pinned probes with provenance and licensing notices.
+- [x] Add original WSDL/XSD feature probes and invalid-document cases, with specification references.
+- [x] Generate per-phase Markdown/JSON reports and distinguish known failures from conformance passes.
+- [x] Gate result drift in CI and provide a strict mode that stays red for remaining gaps.
+- [ ] Add independent schema/instance validation and native-value oracles for every upstream case.
+- [ ] Adapt external-schema databinding examples and cover every normative WSDL 1.1 constraint.
+- [ ] Execute SOAP wire assertions and WS-I profile assertions with explicit conformance targets.
+- [ ] Add official WSDL 2.0 and XML Schema validity-suite adapters with version-specific expectations.
+
+## Deferred feature work
 
 Revisit only with a concrete consumer contract and fixtures: SOAP 1.2, wider XSD coverage, typed SOAP headers, WS-Security, RPC bindings, attachments, browser/Bun/Deno support, Effect 4 support, and SOAP server/WSDL generation. Do not add plugin frameworks or multiple packages until actual implementation boundaries justify them.
 

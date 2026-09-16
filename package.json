@@ -45,6 +45,7 @@
     "lint": "biome check .",
     "format": "biome check --write .",
     "check": "pnpm lint && pnpm typecheck && pnpm build && pnpm test",
+    "conformance": "tsc -p tsconfig.conformance.json && node .conformance-build/conformance/run.js",
     "prepack": "pnpm build",
     "example": "pnpm build && node dist/cli/index.js generate test/fixtures/orders.wsdl --out examples/generated && tsc --strict --skipLibCheck --target ES2022 --module NodeNext --rootDir examples --outDir .example-build examples/demo.ts examples/serve-rest.ts && node .example-build/demo.js",
     "rest": "pnpm build && tsc --strict --skipLibCheck --target ES2022 --module NodeNext --rootDir examples --outDir .example-build examples/serve-rest.ts && node .example-build/serve-rest.js"
