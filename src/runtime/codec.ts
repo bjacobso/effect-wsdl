@@ -3,7 +3,7 @@ import { type Element, expanded, type Primitive, type Type } from "../model/inde
 import { attr, escapeXml, qname, type XmlNode, XSI } from "../xml.js";
 
 export type Types = Readonly<Record<string, Type>>;
-const ranges: Readonly<Record<string, readonly [bigint, bigint]>> = {
+export const integerRanges: Readonly<Record<string, readonly [bigint, bigint]>> = {
   byte: [-128n, 127n],
   short: [-32768n, 32767n],
   int: [-2147483648n, 2147483647n],
@@ -108,7 +108,7 @@ export function parsePrimitive(primitive: Primitive, value: string): unknown {
   }
   if (!/^[+-]?\d+$/.test(text)) fail("Invalid integer");
   const number = BigInt(text);
-  const bounds = ranges[primitive];
+  const bounds = integerRanges[primitive];
   if (bounds && (number < bounds[0] || number > bounds[1])) fail("Integer out of range");
   return ["integer", "long", "unsignedLong"].includes(primitive) ? number : Number(number);
 }
@@ -129,7 +129,10 @@ function enumeration(type: Extract<Type, { kind: "primitive" }>, value: unknown)
   )
     fail("Value is outside enumeration");
 }
-function formatPrimitive(type: Extract<Type, { kind: "primitive" }>, value: unknown): string {
+export function formatPrimitive(
+  type: Extract<Type, { kind: "primitive" }>,
+  value: unknown,
+): string {
   const p = type.primitive;
   let text: string;
   if (["string", "decimal", "date", "dateTime", "time"].includes(p)) {

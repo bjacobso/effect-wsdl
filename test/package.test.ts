@@ -53,10 +53,13 @@ it("installs the tarball, generates and compiles a consumer, and exercises publi
       `
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
-import { Effect, Either } from "effect";
-import { FetchHttpClient } from "@effect/platform";
+import { Effect, Either, Layer } from "effect";
+import { FetchHttpClient, HttpApiBuilder, HttpServer } from "@effect/platform";
+import { load, memoryLoader, makeClient } from "effect-wsdl";
+import { makeHttpApi } from "effect-wsdl/http-api";
 import { OrdersClient, Operation1Input } from "./generated/index.js";
 import { Schema } from "effect";
+const contract = await Effect.runPromise(load("file:///orders.wsdl").pipe(Effect.provide(memoryLoader({ "file:///orders.wsdl": ${JSON.stringify(await readFile(fixture, "utf8"))} }))));
 assert.equal(Schema.is(Operation1Input)({ orderId: "123" }), true);
 assert.equal(Schema.is(Operation1Input)({ orderId: 123 }), false);
 const server = createServer(async (req, res) => {
@@ -86,6 +89,17 @@ try {
   } else throw new Error("Expected declared fault");
   const viaLayer = await Effect.runPromise(Effect.gen(function* () { const client = yield* OrdersClient.Tag; return yield* client.getOrder({ orderId: "123" }); }).pipe(Effect.provide(OrdersClient.layer(config)), Effect.provide(FetchHttpClient.layer)));
   assert.equal(viaLayer.total, "1.00");
+  const dynamic = await Effect.runPromise(makeClient(contract, config).pipe(Effect.provide(FetchHttpClient.layer)));
+  const direct = await Effect.runPromise(dynamic.call("GetOrder", { orderId: "123" }));
+  assert.ok(Schema.is(Schema.Struct({ orderId: Schema.String, status: Schema.String, total: Schema.String }))(direct));
+  const bridge = await Effect.runPromise(makeHttpApi(contract, { client: config }));
+  assert.ok(bridge.openApi.paths["/soap/GetOrder"]);
+  const web = HttpApiBuilder.toWebHandler(Layer.mergeAll(bridge.layer.pipe(Layer.provide(FetchHttpClient.layer)), HttpServer.layerContext));
+  try {
+    const response = await web.handler(new Request("http://rest.test/soap/GetOrder", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ orderId: "123" }) }));
+    assert.equal(response.status, 200);
+    assert.deepEqual(await response.json(), { orderId: "123", status: "shipped", total: "1.00" });
+  } finally { await web.dispose(); }
 } finally { server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve())); }
 console.log("consumer passed");
 `,

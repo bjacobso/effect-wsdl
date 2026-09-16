@@ -29,6 +29,10 @@
     "./model": {
       "types": "./dist/model/index.d.ts",
       "import": "./dist/model/index.js"
+    },
+    "./http-api": {
+      "types": "./dist/http-api/index.d.ts",
+      "import": "./dist/http-api/index.js"
     }
   },
   "bin": {
@@ -42,7 +46,8 @@
     "format": "biome check --write .",
     "check": "pnpm lint && pnpm typecheck && pnpm build && pnpm test",
     "prepack": "pnpm build",
-    "example": "pnpm build && node dist/cli/index.js generate test/fixtures/orders.wsdl --out examples/generated && tsc --strict --skipLibCheck --target ES2022 --module NodeNext --rootDir examples --outDir .example-build examples/demo.ts && node .example-build/demo.js"
+    "example": "pnpm build && node dist/cli/index.js generate test/fixtures/orders.wsdl --out examples/generated && tsc --strict --skipLibCheck --target ES2022 --module NodeNext --rootDir examples --outDir .example-build examples/demo.ts examples/serve-rest.ts && node .example-build/demo.js",
+    "rest": "pnpm build && tsc --strict --skipLibCheck --target ES2022 --module NodeNext --rootDir examples --outDir .example-build examples/serve-rest.ts && node .example-build/serve-rest.js"
   },
   "peerDependencies": {
     "@effect/platform": "^0.97.2",
@@ -54,6 +59,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.5.14",
     "@effect/platform": "0.97.2",
+    "@effect/platform-node": "0.108.2",
     "@types/node": "22.19.15",
     "effect": "3.22.2",
     "fast-check": "4.10.1",

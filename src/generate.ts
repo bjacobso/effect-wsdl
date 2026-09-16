@@ -2,6 +2,7 @@ import { Effect } from "effect";
 import { GenerationError } from "./errors.js";
 import type { Contract, Element, Generated, Type } from "./model/index.js";
 import { parsePrimitive } from "./runtime/codec.js";
+import { selectPort } from "./selection.js";
 export const version = "0.1.0-alpha.0";
 export interface GenerateOptions {
   readonly service?: string;
@@ -82,20 +83,7 @@ export function generate(
 ): Effect.Effect<Generated, GenerationError> {
   return Effect.try({
     try: () => {
-      const matching = contract.ports.filter(
-        (p) =>
-          (!options.service || p.service === options.service) &&
-          (!options.port || p.name === options.port),
-      );
-      const supported = matching.filter((p) => !p.diagnostics.length);
-      if (!supported.length)
-        throw new Error(
-          matching.flatMap((p) => p.diagnostics.map((d) => d.message)).join("; ") ||
-            "No matching service/port",
-        );
-      if (supported.length !== 1)
-        throw new Error("Ambiguous service/port; select --service and --port explicitly");
-      const port = supported[0]!;
+      const port = selectPort(contract, options);
       const reachable = new Set<string>();
       const visit = (id: string) => {
         if (reachable.has(id)) return;

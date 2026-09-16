@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<w:definitions xmlns:w="http://schemas.xmlsoap.org/wsdl/" xmlns:s="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:x="http://www.w3.org/2001/XMLSchema" xmlns:t="urn:values" targetNamespace="urn:values">
+  <w:types>
+    <x:schema targetNamespace="urn:values" elementFormDefault="qualified">
+      <x:complexType name="Value">
+        <x:sequence>
+          <x:element name="id" type="x:long"/>
+          <x:element name="total" type="x:decimal"/>
+          <x:element name="data" type="x:base64Binary"/>
+          <x:element name="special" type="x:double"/>
+          <x:element name="note" type="x:string" minOccurs="0" nillable="true"/>
+          <x:element name="tags" type="x:string" minOccurs="0" maxOccurs="3" nillable="true"/>
+          <x:element name="child" type="t:Value" minOccurs="0" nillable="true"/>
+        </x:sequence>
+        <x:attribute name="version" type="x:int"/>
+      </x:complexType>
+      <x:element name="Values" type="t:Value"/>
+    </x:schema>
+  </w:types>
+  <w:message name="ValuesMessage"><w:part name="body" element="t:Values"/></w:message>
+  <w:portType name="ValuesPortType"><w:operation name="Echo"><w:input message="t:ValuesMessage"/><w:output message="t:ValuesMessage"/></w:operation></w:portType>
+  <w:binding name="ValuesBinding" type="t:ValuesPortType">
+    <s:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <w:operation name="Echo"><s:operation soapAction="urn:values/Echo"/><w:input><s:body use="literal"/></w:input><w:output><s:body use="literal"/></w:output></w:operation>
+  </w:binding>
+  <w:service name="Values"><w:port name="ValuesSoap" binding="t:ValuesBinding"><s:address location="http://localhost:8080/values"/></w:port></w:service>
+</w:definitions>

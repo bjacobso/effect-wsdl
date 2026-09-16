@@ -89,9 +89,18 @@ Depends on M5 and all SPEC.md release acceptance criteria.
 
 Exit: another developer can follow the README against the published alpha without relying on unpublished source paths or undocumented setup. Creating this public design repository does not itself authorize an npm release.
 
+## Runtime client and HTTP bridge extension
+
+- [x] Reuse port selection and SOAP invocation for `makeClient` without source generation.
+- [x] Reflect structural JSON schemas, recursive types, precision-safe values, and fault details.
+- [x] Provide an Effect HttpApi and implementation Layer with operation selection and OpenAPI metadata.
+- [x] Bound and validate incoming requests, map errors, and propagate cancellation upstream.
+- [x] Test native runtime calls, JSON-to-SOAP round trips, real Node HTTP serving, and installed-package exports.
+- [x] Document the JSON mapping and provide a Node server example with Swagger UI.
+
 ## Deferred work
 
-Revisit only with a concrete consumer contract and fixtures: SOAP 1.2, wider XSD coverage, typed SOAP headers, WS-Security, RPC bindings, attachments, browser/Bun/Deno support, Effect 4 support, dynamic invocation, and server/WSDL generation. Do not add plugin frameworks or multiple packages until actual implementation boundaries justify them.
+Revisit only with a concrete consumer contract and fixtures: SOAP 1.2, wider XSD coverage, typed SOAP headers, WS-Security, RPC bindings, attachments, browser/Bun/Deno support, Effect 4 support, and SOAP server/WSDL generation. Do not add plugin frameworks or multiple packages until actual implementation boundaries justify them.
 
 ## Main risks and decision gates
 

@@ -152,7 +152,11 @@ Generation builds and validates all files in memory before mutation. Refuse to o
 6. An installed package tarball works in an independent consumer project on supported Node versions. Runtime imports do not load generator or filesystem dependencies.
 7. README examples become executable tested examples, and every advertised supported construct has a fixture. Publish a limitations table with the first release.
 
-## 10. Reference material
+## 10. Runtime client and HTTP bridge extension
+
+The implemented scope now also includes `makeClient(contract, options)` and `makeHttpApi(contract, options)`. Runtime clients interpret the resolved contract using the same SOAP invocation path as source-generated clients. HttpApi reflection exposes selected operations as JSON POST endpoints with structural schemas and OpenAPI metadata. WSDL resource loading remains a startup concern; incoming requests cannot supply a WSDL URL or upstream endpoint. See [docs/REST.md](./docs/REST.md) for the normative JSON mapping, status policy, request budgets, and API/lifecycle contract. SOAP server generation remains outside scope.
+
+## 11. Reference material
 
 These sources ground the design; this project's subset and API choices are its own constraints.
 
@@ -161,3 +165,4 @@ These sources ground the design; this project's subset and API choices are its o
 - [XML Schema 1.0 structures](https://www.w3.org/TR/xmlschema-1/) and [datatypes](https://www.w3.org/TR/xmlschema-2/): schema semantics and lexical values.
 - [Effect Schema](https://effect.website/docs/v3/schema/introduction): runtime schemas.
 - [Effect platform HttpClient](https://effect.website/docs/v3/api/platform/HttpClient): injectable HTTP transport.
+- [Effect HttpApiBuilder](https://effect.website/docs/v3/api/platform/HttpApiBuilder): reflected APIs, implementation Layers, and Web handlers.

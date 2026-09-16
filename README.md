@@ -1,8 +1,8 @@
 # effect-wsdl
 
-Generate typed TypeScript SOAP clients from WSDL, with [Effect](https://effect.website/) operations, runtime validation, typed faults, and injectable HTTP transport.
+Generate typed TypeScript SOAP clients from WSDL, build clients at runtime, or expose a WSDL as a JSON HTTP API using [Effect](https://effect.website/).
 
-**Working alpha (`0.1.0-alpha.0`), not yet published to npm.** The CLI, library, and runtime are implemented. Unsupported contract features fail generation explicitly.
+**Working alpha (`0.1.0-alpha.0`), not yet published to npm.** The generator, runtime client, and reflected `HttpApi` bridge are implemented. Unsupported contract features fail explicitly.
 
 ## Try it
 
@@ -49,6 +49,65 @@ Generated files include request/response schemas, fault-detail schemas, XML meta
 Errors distinguish input validation, transport, timeouts, HTTP status, response decoding, and SOAP faults. Handle a declared fault through `error._tag === "SoapFault"`, then narrow `error.detail._tag` to its WSDL fault name. Unmatched details use `UnknownFault`. Default timeout is 30 seconds and response limit is 10 MiB. Requests support Effect interruption and do not retry automatically.
 
 Pass authentication through `config.headers` or your injected `HttpClient`. SOAP protocol headers are reserved. The runtime disables platform HTTP tracing for these requests to avoid automatically capturing sensitive URLs and headers.
+
+## Runtime client — no generated files
+
+```ts
+import { Effect } from "effect"
+import { FetchHttpClient } from "@effect/platform"
+import { load, makeClient, nodeLoader } from "effect-wsdl"
+
+const program = Effect.gen(function* () {
+  const contract = yield* load("./contracts/orders.wsdl")
+  const client = yield* makeClient(contract)
+  return yield* client.call("GetOrder", { orderId: "order-123" })
+}).pipe(
+  Effect.provide(nodeLoader(["./contracts"])),
+  Effect.provide(FetchHttpClient.layer)
+)
+```
+
+`makeClient` interprets the loaded contract without emitting or evaluating source code. Calls use original WSDL names; `client.operations` exposes definitions and native schemas. Results have static type `unknown` because the contract is discovered at runtime. Native values retain `bigint` and `Uint8Array`; source-generated clients remain available for compile-time operation types.
+
+## WSDL → JSON HTTP API
+
+Start a local adapter and Swagger UI for a WSDL whose upstream SOAP service is running:
+
+```sh
+pnpm rest ./contracts/orders.wsdl 3000
+# POST http://127.0.0.1:3000/soap/GetOrder
+# Swagger UI: http://127.0.0.1:3000/docs
+
+curl http://127.0.0.1:3000/soap/GetOrder \
+  -H 'content-type: application/json' \
+  -d '{"orderId":"order-123"}'
+```
+
+The reusable bridge lives in `effect-wsdl/http-api`:
+
+```ts
+import { FetchHttpClient, HttpApiBuilder, HttpServer } from "@effect/platform"
+import { Effect, Layer } from "effect"
+import { makeHttpApi } from "effect-wsdl/http-api"
+
+// contract is the result of load(...).
+const bridge = await Effect.runPromise(makeHttpApi(contract, {
+  prefix: "/api/orders",
+  operations: ["GetOrder"],
+  client: { endpoint: "https://example.com/soap/orders" }
+}))
+
+const { handler, dispose } = HttpApiBuilder.toWebHandler(Layer.mergeAll(
+  bridge.layer.pipe(Layer.provide(FetchHttpClient.layer)),
+  HttpServer.layerContext
+))
+// Mount handler(Request) in your host; call dispose() on shutdown.
+// bridge.api is an Effect HttpApi; bridge.openApi is its OpenAPI document.
+```
+
+Each selected operation becomes a JSON `POST` route. WSDL provides no reliable resource/method semantics for inferring GET, PATCH, or DELETE. Bodies preserve the existing schema shape. Reflected OpenAPI schemas describe recursive objects, enums, arrays, and attributes. Large integers use JSON strings, binary values use base64, and non-finite numbers use `"INF"`, `"-INF"`, or `"NaN"`. Decimal strings retain precision.
+
+See [REST mapping and integration](./docs/REST.md) for errors, limits, hosting, and lifecycle. The [Node server example](./examples/serve-rest.ts) uses `@effect/platform-node` as a host dependency; the bridge itself uses the existing Effect/platform peers.
 
 ## Library API
 
@@ -99,7 +158,7 @@ CLI exit codes: `0` success, `1` contract/I/O failure, `2` invalid usage, `3` st
 | Primitives | Strings, booleans, bounded integers, bigint integers, decimal strings, float/double, date/time lexical strings, binary bytes |
 | Enumerations | String/numeric bases; decimals remain `string` with runtime validation |
 
-Unsupported: SOAP 1.2, WSDL 2.0, RPC/encoded bindings, one-way operations, SOAP header bindings, WS-Security/Policy, attachments, server generation, choice/all, mixed content, inheritance, wildcards, identity constraints, defaults/fixed values, general restriction facets, attribute references, and unlisted XSD built-ins. Nillable types with required attributes and ambiguous element-property names are rejected. Nil values cannot carry attributes; `UnknownFault` is reserved. Only UTF-8 XML 1.0 is accepted.
+Unsupported: SOAP 1.2, WSDL 2.0, RPC/encoded bindings, one-way operations, SOAP header bindings, WS-Security/Policy, attachments, SOAP server generation, choice/all, mixed content, inheritance, wildcards, identity constraints, defaults/fixed values, general restriction facets, attribute references, and unlisted XSD built-ins. Nillable types with required attributes and ambiguous element-property names are rejected. Nil values cannot carry attributes; `UnknownFault` is reserved. Only UTF-8 XML 1.0 is accepted.
 
 See [SPEC.md](./SPEC.md), [PLAN.md](./PLAN.md), and [design decisions](./docs/DECISIONS.md).
 

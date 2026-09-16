@@ -11,3 +11,4 @@ export {
 } from "./loader.js";
 export type { NetworkPolicy } from "./network.js";
 export { inspect } from "./resolve.js";
+export { makeClient, type RuntimeClient, type RuntimeClientOptions } from "./runtime/client.js";

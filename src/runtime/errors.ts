@@ -1,4 +1,10 @@
 import { Data } from "effect";
+export class ClientConstructionError extends Data.TaggedError("ClientConstructionError")<{
+  readonly message: string;
+}> {}
+export class UnknownOperationError extends Data.TaggedError("UnknownOperationError")<{
+  readonly operation: string;
+}> {}
 export class InputValidationError extends Data.TaggedError("InputValidationError")<{
   readonly message: string;
   readonly operation: string;

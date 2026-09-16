@@ -12,6 +12,10 @@ Target Effect 3.22.2 / platform 0.97.2. Consumer tests compile with TypeScript 5
 
 Generated types are static declarations. Effect `Schema.declare` validators delegate to XML value validation so recursive types and wire restrictions share one implementation. They do not expose structural ASTs for JSON Schema derivation. Decimal enumerations use `string` statically because multiple lexical strings represent one numeric value; runtime validation compares without floating-point conversion. Date/time values preserve lexical strings. `xs:float` decoding applies binary32 rounding.
 
+## HTTP reflection
+
+The HTTP bridge separately constructs structural JSON schemas from the resolved model. Its native client still shares the XML validators above. Explicit JSON conversion preserves bigint, binary, and non-finite values. Reflection uses the platform's public HttpApi APIs; the dynamic registration boundary has one documented type assertion because TypeScript cannot track a runtime list of endpoint names. See [REST.md](./REST.md) for the mapping and hosting contract.
+
 ## Source loading
 
 Local paths are checked after symlink resolution against explicit roots. Remote loading requires exact host/port entries. DNS results are validated, then the connection uses a pinned lookup and no shared socket pool. Redirects and URL credentials are rejected. Private-address opt-in still requires a host allowlist. Every import is checked. Custom `ResourceLoader` implementations own their resource policy; library graph budgets still apply.
