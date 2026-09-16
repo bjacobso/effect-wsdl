@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="urn:orders" targetNamespace="urn:orders">
+  <wsdl:types>
+    <xs:schema targetNamespace="urn:orders" elementFormDefault="qualified">
+      <xs:element name="GetOrder"><xs:complexType><xs:sequence><xs:element name="orderId" type="xs:string"/></xs:sequence></xs:complexType></xs:element>
+      <xs:element name="GetOrderResponse"><xs:complexType><xs:sequence><xs:element name="orderId" type="xs:string"/><xs:element name="status" type="tns:Status"/><xs:element name="total" type="xs:decimal"/></xs:sequence></xs:complexType></xs:element>
+      <xs:simpleType name="Status"><xs:restriction base="xs:string"><xs:enumeration value="pending"/><xs:enumeration value="shipped"/></xs:restriction></xs:simpleType>
+      <xs:element name="OrderNotFound"><xs:complexType><xs:sequence><xs:element name="orderId" type="xs:string"/></xs:sequence></xs:complexType></xs:element>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="GetOrderInput"><wsdl:part name="body" element="tns:GetOrder"/></wsdl:message>
+  <wsdl:message name="GetOrderOutput"><wsdl:part name="body" element="tns:GetOrderResponse"/></wsdl:message>
+  <wsdl:message name="OrderNotFoundMessage"><wsdl:part name="body" element="tns:OrderNotFound"/></wsdl:message>
+  <wsdl:portType name="OrdersPortType"><wsdl:operation name="GetOrder"><wsdl:input message="tns:GetOrderInput"/><wsdl:output message="tns:GetOrderOutput"/><wsdl:fault name="OrderNotFound" message="tns:OrderNotFoundMessage"/></wsdl:operation></wsdl:portType>
+  <wsdl:binding name="OrdersSoapBinding" type="tns:OrdersPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="GetOrder"><soap:operation soapAction="urn:orders/GetOrder"/><wsdl:input><soap:body use="literal"/></wsdl:input><wsdl:output><soap:body use="literal"/></wsdl:output><wsdl:fault name="OrderNotFound"><soap:fault name="OrderNotFound" use="literal"/></wsdl:fault></wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Orders"><wsdl:port name="OrdersSoap" binding="tns:OrdersSoapBinding"><soap:address location="http://localhost:8080/soap/orders"/></wsdl:port></wsdl:service>
+</wsdl:definitions>

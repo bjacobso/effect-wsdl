@@ -1,0 +1,63 @@
+{
+  "name": "effect-wsdl",
+  "version": "0.1.0-alpha.0",
+  "description": "Effect-native WSDL to TypeScript generator and SOAP client runtime",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bjacobso/effect-wsdl.git"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@10.20.0",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./runtime": {
+      "types": "./dist/runtime/index.d.ts",
+      "import": "./dist/runtime/index.js"
+    },
+    "./model": {
+      "types": "./dist/model/index.d.ts",
+      "import": "./dist/model/index.js"
+    }
+  },
+  "bin": {
+    "effect-wsdl": "./dist/cli/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "check": "pnpm lint && pnpm typecheck && pnpm build && pnpm test",
+    "prepack": "pnpm build",
+    "example": "pnpm build && node dist/cli/index.js generate test/fixtures/orders.wsdl --out examples/generated && tsc --strict --skipLibCheck --target ES2022 --module NodeNext --rootDir examples --outDir .example-build examples/demo.ts && node .example-build/demo.js"
+  },
+  "peerDependencies": {
+    "@effect/platform": "^0.97.2",
+    "effect": "^3.22.2"
+  },
+  "dependencies": {
+    "saxes": "6.0.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.14",
+    "@effect/platform": "0.97.2",
+    "@types/node": "22.19.15",
+    "effect": "3.22.2",
+    "fast-check": "4.10.1",
+    "typescript": "5.9.3",
+    "vitest": "5.0.1"
+  }
+}

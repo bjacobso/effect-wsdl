@@ -1,6 +1,6 @@
 # effect-wsdl specification
 
-Status: proposed, pre-implementation. This document defines the first release target; it does not describe existing functionality.
+Status: implemented alpha (`0.1.0-alpha.0`), not published. This document remains the target contract. See README.md for current compatibility and docs/DECISIONS.md for alpha restrictions: declarative validation schemas, positional schema export names, nil/attribute limitations, reserved generic-fault names, and suppressed default HTTP tracing. Remote loading uses explicit host policy with pinned DNS; redirects are rejected. npm release gates remain open.
 
 ## 1. Purpose and boundaries
 
@@ -78,7 +78,7 @@ For single-valued elements, absence maps to an optional property only when `minO
 
 ## 5. Public library and generated surface
 
-Proposed library operations:
+Public library operations:
 
 | Operation | Result | Required services |
 | --- | --- | --- |
@@ -128,7 +128,7 @@ Default loading limits: 5 MiB per document, 25 MiB total graph, 100 documents, i
 
 ## 8. CLI contract
 
-Proposed commands:
+CLI commands:
 
 ```sh
 effect-wsdl inspect ./service.wsdl --json
